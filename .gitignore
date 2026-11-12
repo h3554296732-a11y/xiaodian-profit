@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+*.tsbuildinfo
+*.log
+.DS_Store
+/artifacts/
+/outputs/
+.openai/
+.sites/
+supabase/.temp/
+*.pem
+*.key
+*.p12
+*.pfx

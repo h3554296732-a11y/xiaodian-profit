@@ -1,0 +1,25 @@
+# 在受限 Windows 环境中，运行脚本时只提示依赖状态，避免隐式安装。
+# 安装和更新依赖仍显式运行 pnpm install。
+verifyDepsBeforeRun: warn
+packages:
+  - "."
+minimumReleaseAgeExclude:
+  - "@next/env@16.4.1"
+  - "@next/swc-darwin-arm64@16.4.1"
+  - "@next/swc-darwin-x64@16.4.1"
+  - "@next/swc-linux-arm64-gnu@16.4.1"
+  - "@next/swc-linux-arm64-musl@16.4.1"
+  - "@next/swc-linux-x64-gnu@16.4.1"
+  - "@next/swc-linux-x64-musl@16.4.1"
+  - "@next/swc-win32-arm64-msvc@16.4.1"
+  - "@next/swc-win32-x64-msvc@16.4.1"
+  - next@16.4.1
+  - react-dom@19.3.1
+  - react@19.3.1
+  - "@supabase/auth-js@2.118.0"
+  - "@supabase/functions-js@2.118.0"
+  - "@supabase/postgrest-js@2.118.0"
+  - "@supabase/realtime-js@2.118.0"
+  - "@supabase/storage-js@2.118.0"
+  - "@supabase/supabase-js@2.118.0"
+  - "@electric-sql/pglite@0.5.10"

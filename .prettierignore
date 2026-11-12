@@ -1,0 +1,5 @@
+.next
+node_modules
+artifacts
+pnpm-lock.yaml
+next-env.d.ts

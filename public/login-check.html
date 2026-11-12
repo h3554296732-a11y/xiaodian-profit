@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self' https://api.lirunben.cn; base-uri 'none'; form-action 'none'">
+  <title>登录保持检查 · 小店利润本</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:#183c33;background:#f4f7f2;font-synthesis:none;color-scheme:light}
+    *{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #e1e8df;padding:19px max(20px,calc((100vw - 640px)/2));font-size:15px;font-weight:750}
+    main{max-width:640px;margin:0 auto;padding:30px 18px 40px}h1{font-size:28px;line-height:1.3;letter-spacing:-.8px;margin:8px 0 12px}h2{font-size:17px;margin:0 0 14px}.eyebrow{font-size:12px;color:#63836b;letter-spacing:.08em}.intro{font-size:14px;line-height:1.9;color:#596d63;margin:0 0 23px}
+    .panel{background:#fff;border:1px solid #dce6da;border-radius:16px;padding:21px;margin-bottom:16px}.summary{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:750;margin:0 0 7px}.dot{width:10px;height:10px;flex:0 0 auto;border-radius:50%;background:#8d9c8d}.summary[data-state=done] .dot{background:#2f7961}.summary[data-state=attention] .dot{background:#b87b20}.subtle{font-size:13px;color:#66766a;line-height:1.8;margin:0}
+    dl{margin:6px 0 0}.row{display:grid;grid-template-columns:106px minmax(0,1fr);gap:12px;padding:15px 0;border-top:1px solid #edf0e9}.row:first-child{border-top:0}dt{font-size:13px;line-height:1.7;color:#657469}dd{font-size:14px;line-height:1.65;margin:0;overflow-wrap:anywhere}.good{color:#23664f}.warn{color:#8d5f15}.muted{color:#68786d}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}button,.return{font:inherit;font-size:14px;min-height:46px;border-radius:9px;padding:11px 12px;text-align:center;text-decoration:none;cursor:pointer}button{border:1px solid #245e4a;background:#245e4a;color:#fff;font-weight:650}button.secondary{background:#fff;color:#245e4a;border-color:#cad8cb}button:disabled{opacity:.55;cursor:wait}.return{display:block;border:1px solid #cad8cb;color:#245e4a;background:#fff;margin-top:10px}.note{font-size:12px;line-height:1.85;color:#6c786e;margin:14px 0 0}pre{font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-size:12px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f8f4;border-radius:9px;padding:14px;margin:0;color:#475e4e}#copy-feedback{font-size:12px;line-height:1.7;min-height:22px;color:#53735f;margin:10px 0 0}footer{text-align:center;font-size:11px;line-height:1.7;color:#8a9889;padding-top:8px}button:focus-visible,a:focus-visible,pre:focus-visible{outline:3px solid #a7c3a1;outline-offset:3px}@media(max-width:360px){main{padding-left:13px;padding-right:13px}.panel{padding:17px}.row{grid-template-columns:92px minmax(0,1fr);gap:9px}h1{font-size:26px}}
+  </style>
+</head>
+<body>
+  <header>小店利润本</header>
+  <main>
+    <div class="eyebrow">登录状态排查</div>
+    <h1>登录保持检查</h1>
+    <p class="intro">看看登录信息是否保存、页面和连接是否正常。<br>本页不会退出登录、发送验证码或修改账本，也不会读取登录凭证内容。</p>
+    <section class="panel" aria-labelledby="summary-text">
+      <p class="summary" id="summary" data-state="checking" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="summary-text">正在检查，请稍候…</span></p>
+      <p class="subtle" id="summary-detail">连接检测最多需要约 10 秒。</p>
+      <dl>
+        <div class="row"><dt>当前页面</dt><dd id="page-status">正在检查</dd></div>
+        <div class="row"><dt>打开方式</dt><dd id="browser-status">正在检查</dd></div>
+        <div class="row"><dt>保存功能</dt><dd id="storage-status">正在检查</dd></div>
+        <div class="row"><dt>登录保存项</dt><dd id="session-presence">正在检查</dd></div>
+        <div class="row"><dt>检查标记</dt><dd id="marker-status">正在检查</dd></div>
+        <div class="row"><dt>网站版本</dt><dd id="build-status">正在检查</dd></div>
+        <div class="row"><dt>登录服务连接</dt><dd id="api-status">正在检查</dd></div>
+      </dl>
+    </section>
+    <div class="actions"><button id="run-check" type="button">重新检查</button><button class="secondary" id="copy-result" type="button" disabled>复制检查结果</button></div>
+    <p id="copy-feedback" role="status" aria-live="polite"></p>
+    <a class="return" href="https://lirunben.cn/account/?v=20261110" referrerpolicy="no-referrer">返回利润本</a>
+    <p class="note">“登录保存项存在”只说明保存项还在，不代表登录一定有效。本页帮助缩小排查范围，不能单独确定掉线原因。请保留当前网站数据，无需退出或清理缓存。</p>
+    <section class="panel" style="margin-top:22px" aria-labelledby="report-heading"><h2 id="report-heading">可复制的检查结果</h2><pre id="report" tabindex="0">检查中…</pre><p class="note">结果不包含手机号、验证码、密码、登录凭证或账本内容。</p></section>
+    <noscript><p class="panel">当前浏览器没有运行页面脚本，无法完成检查。请在浏览器中允许此网站正常运行后再试。</p></noscript>
+    <footer>检查页版本 20261110.1 · 只在此浏览器保存检查标记</footer>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      const VERSION = '20261110.1';
+      const EXPECTED_BUILD = '1MSTlJAFMZ0Bwlf872Ca6';
+      const AUTH_KEY = 'sb-nporrbvnaezafvryjqao-auth-token';
+      const MARKER_KEY = 'lirunben:login-check:v1';
+      const byId = (id) => document.getElementById(id);
+      let running = false;
+      let reportText = '';
+
+      function display(id, text, state = '') {
+        const element = byId(id);
+        element.textContent = text;
+        element.className = state;
+      }
+      function localTime(value) {
+        const date = new Date(value);
+        return Number.isFinite(date.getTime()) ? date.toLocaleString('zh-CN', {hour12:false}) : '未知';
+      }
+      function storageCheck(now) {
+        const result = { writable:false, sessionKeyPresent:null, markerPreviouslyPresent:null, markerPreviousTime:null, markerFirstTime:null, markerCount:null };
+        let storage;
+        try { storage = window.localStorage; } catch { return result; }
+        // Inspect key names only. Never retrieve, parse, copy or log an auth value.
+        try {
+          result.sessionKeyPresent = false;
+          for (let i = 0; i < storage.length; i += 1) {
+            if (storage.key(i) === AUTH_KEY) { result.sessionKeyPresent = true; break; }
+          }
+        } catch { result.sessionKeyPresent = null; }
+        const scratchKey = MARKER_KEY + ':scratch:' + now;
+        const scratchValue = 'storage-check-' + now;
+        try {
+          storage.setItem(scratchKey, scratchValue);
+          result.writable = storage.getItem(scratchKey) === scratchValue;
+        } catch { result.writable = false; }
+        finally { try { storage.removeItem(scratchKey); } catch {} }
+        if (!result.writable) return result;
+        try {
+          const previousRaw = storage.getItem(MARKER_KEY);
+          let previous = null;
+          if (previousRaw) {
+            try {
+              const parsed = JSON.parse(previousRaw);
+              if (parsed && parsed.version === VERSION && Number.isFinite(parsed.first) && Number.isFinite(parsed.last) && Number.isInteger(parsed.count) && parsed.count > 0 && parsed.count < 1000000) previous = parsed;
+            } catch {}
+          }
+          result.markerPreviouslyPresent = Boolean(previous);
+          result.markerPreviousTime = previous ? new Date(previous.last).toISOString() : null;
+          result.markerFirstTime = previous ? new Date(previous.first).toISOString() : new Date(now).toISOString();
+          result.markerCount = previous ? previous.count + 1 : 1;
+          storage.setItem(MARKER_KEY, JSON.stringify({version:VERSION, first:previous ? previous.first : now, last:now, count:result.markerCount}));
+        } catch { result.markerPreviouslyPresent = null; }
+        return result;
+      }
+      async function fetchLimited(url) {
+        if (typeof window.fetch !== 'function' || typeof window.AbortController !== 'function') return {response:null, failure:'unsupported'};
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), 10000);
+        try {
+          const response = await fetch(url, {method:'GET', cache:'no-store', credentials:'omit', referrerPolicy:'no-referrer', signal:controller.signal});
+          return {response, failure:null, close:() => clearTimeout(timer)};
+        } catch (error) {
+          clearTimeout(timer);
+          return {response:null, failure:error && error.name === 'AbortError' ? 'timeout' : 'unreachable'};
+        }
+      }
+      async function buildCheck(now) {
+        const fetched = await fetchLimited('/account/?logincheck=' + now);
+        if (!fetched.response) return {status:'unconfirmed', httpStatus:null, reason:fetched.failure};
+        try {
+          if (!fetched.response.ok) return {status:'unconfirmed', httpStatus:fetched.response.status, reason:'http_status'};
+          const html = await fetched.response.text();
+          return {status:html.includes(EXPECTED_BUILD) ? 'current' : 'different', httpStatus:fetched.response.status, reason:null};
+        } catch (error) {
+          return {status:'unconfirmed', httpStatus:fetched.response.status, reason:error && error.name === 'AbortError' ? 'timeout' : 'response_unreadable'};
+        } finally { fetched.close(); }
+      }
+      async function apiCheck() {
+        const fetched = await fetchLimited('https://api.lirunben.cn/healthz');
+        if (!fetched.response) return {status:'unconfirmed', httpStatus:null, reason:fetched.failure};
+        try {
+          if (!fetched.response.ok) return {status:'unconfirmed', httpStatus:fetched.response.status, reason:'http_status'};
+          const body = await fetched.response.json();
+          return {status:body && body.ok === true ? 'ok' : 'unconfirmed', httpStatus:fetched.response.status, reason:body && body.ok === true ? null : 'unexpected_response'};
+        } catch (error) {
+          return {status:'unconfirmed', httpStatus:fetched.response.status, reason:error && error.name === 'AbortError' ? 'timeout' : 'response_unreadable'};
+        } finally { fetched.close(); }
+      }
+      async function runCheck() {
+        if (running) return;
+        running = true;
+        window.__loginCheckDone = false;
+        byId('run-check').disabled = true;
+        byId('copy-result').disabled = true;
+        byId('summary').dataset.state = 'checking';
+        display('summary-text', '正在检查，请稍候…');
+        display('summary-detail', '连接检测最多需要约 10 秒。');
+        display('copy-feedback', '');
+        display('build-status', '正在检查', 'muted');
+        display('api-status', '正在检查', 'muted');
+        const now = Date.now();
+        const secure = location.protocol === 'https:' && window.isSecureContext === true;
+        const browserClass = /MicroMessenger/i.test(navigator.userAgent || '') ? 'WeChat' : 'other_browser';
+        const storage = storageCheck(now);
+        display('page-status', location.origin + (secure ? ' · HTTPS' : ' · 非 HTTPS 或安全环境'), secure ? 'good' : 'warn');
+        display('browser-status', browserClass === 'WeChat' ? '微信内打开' : '其他浏览器');
+        display('storage-status', storage.writable ? '本次写入、读取成功' : '本次无法确认保存成功', storage.writable ? 'good' : 'warn');
+        display('session-presence', storage.sessionKeyPresent === true ? '保存项存在（未读取内容）' : storage.sessionKeyPresent === false ? '未找到保存项' : '无法检查保存项', storage.sessionKeyPresent === true ? 'good' : 'warn');
+        display('marker-status', storage.markerPreviouslyPresent === true ? '上次检查：' + localTime(storage.markerPreviousTime) : storage.markerPreviouslyPresent === false ? '本次首次检查，已保存标记' : '本次无法确认检查标记', storage.markerPreviouslyPresent === null ? 'warn' : '');
+        let build = {status:'unconfirmed', httpStatus:null, reason:'not_finished'};
+        let api = {status:'unconfirmed', httpStatus:null, reason:'not_finished'};
+        try {
+          [build, api] = await Promise.all([buildCheck(now), apiCheck()]);
+          display('build-status', build.status === 'current' ? '已检测到本次登录修复版本' : build.status === 'different' ? '返回内容与本次修复版本不同' : '未能确认版本' + (build.httpStatus ? '（HTTP ' + build.httpStatus + '）' : ''), build.status === 'current' ? 'good' : 'warn');
+          display('api-status', api.status === 'ok' ? '已收到正常连接响应' : '未收到预期连接结果' + (api.httpStatus ? '（HTTP ' + api.httpStatus + '）' : '') + '，不能据此断定手机没有联网', api.status === 'ok' ? 'good' : 'warn');
+          const attention = !secure || !storage.writable || storage.sessionKeyPresent !== true || build.status !== 'current' || api.status !== 'ok';
+          byId('summary').dataset.state = attention ? 'attention' : 'done';
+          display('summary-text', attention ? '检查完成，有结果需要核对' : '本次保存与连接检查正常');
+          display('summary-detail', '检查时间：' + localTime(now) + '。本页不能单独判断登录是否有效。');
+        } catch {
+          byId('summary').dataset.state = 'attention';
+          display('summary-text', '部分检查未完成');
+          display('summary-detail', '已保留本次能得到的结果，可以重新检查。');
+        } finally {
+          const safeReport = {checkVersion:VERSION, checkedAt:new Date(now).toISOString(), siteOrigin:location.origin, secureContext:secure, browserClass, storage, websiteBuild:{expected:EXPECTED_BUILD,...build}, api, limits:['Only auth storage key presence is inspected; no auth value is read.','Key presence does not prove session validity or the cause of logout.']};
+          reportText = JSON.stringify(safeReport, null, 2);
+          byId('report').textContent = reportText;
+          byId('run-check').disabled = false;
+          byId('copy-result').disabled = false;
+          running = false;
+          window.__loginCheckDone = true;
+        }
+      }
+      byId('run-check').addEventListener('click', runCheck);
+      byId('copy-result').addEventListener('click', async () => {
+        if (!reportText) return;
+        try {
+          if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') throw new Error('unavailable');
+          await navigator.clipboard.writeText(reportText);
+          display('copy-feedback', '已复制检查结果，里面不包含登录凭证。');
+        } catch { display('copy-feedback', '自动复制不可用，请长按下方检查结果复制。'); }
+      });
+      runCheck();
+    })();
+  </script>
+</body>
+</html>
